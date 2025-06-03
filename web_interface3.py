@@ -20,7 +20,7 @@ def topbar():
                 top: 0;
                 left: 0;
                 width: 100vw;
-                background-color: #45b9d9 !important;
+                background-color: #a65314 !important;
                 padding: 1rem 2rem;
                 color: white !important;
                 font-weight: bold;
@@ -52,7 +52,27 @@ def topbar():
                 flex-direction: column;
                 overflow: hidden;
             }
-            
+
+            /* NEW CSS FOR BUTTONS */
+            /* Target Streamlit buttons within the nav-container */
+            .nav-container button {
+                background-color: #a65314 !important; /* A slightly darker shade of your topbar color */
+                color: white; /* Text color for the buttons */
+                border: 1px solid #7a3a0e; /* A subtle border */
+                border-radius: 8px; /* Rounded corners */
+                padding: 0.5rem 1rem; /* Padding inside buttons */
+                font-size: 0.9rem; /* Adjust font size if needed */
+                font-weight: bold;
+                cursor: pointer;
+                transition: background-color 0.3s ease; /* Smooth hover effect */
+            }
+
+            /* Hover effect for buttons */
+            .nav-container button:hover {
+                background-color: #a65314; /* Lighter shade on hover */
+                border-color: #be611e;
+            }
+
             /* Video container styling */
             .video-container {
                 flex: 1;
@@ -72,7 +92,7 @@ def topbar():
                 max-height: 60vh;
                 border-radius: 10px;
                 overflow: hidden;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 8px srgba(0,0,0,0.1);
             }
             
             /* Video element responsive sizing */
@@ -126,7 +146,7 @@ def topbar():
         if st.button("💪 Program", key="nav_program", use_container_width=True):
             # If no coach is selected, default to Max Bauer
             if st.session_state.selected_coach is None:
-                st.session_state.selected_coach = "Max Bauer"
+                st.session_state.selected_coach = "Coach Bauer"
             st.session_state.page = 'exercise_demo'
             st.rerun()
     
@@ -139,16 +159,16 @@ def topbar():
 
 # Avatar images (use your actual image paths)
 avatar_paths = {
-    "Max Bauer": "data\Calisthenics.jpg",      # Calisthenics
-    "Liam Carter": "data\Gym.jpg",  # Strength
-    "Sofia Müller": "data\Yoga.jpg" # Yoga
+    "Coach Bauer": "data\Calisthenics.jpg",      # Calisthenics
+    "Coach Carter": "data\Gym.jpg",  # Strength
+    "Coach Fang": "data\Yoga.jpg" # Yoga
 }
 
 # Coach descriptions
 coach_descriptions = {
-    "Max Bauer": "🏃‍♂️ Calisthenics Expert - Master bodyweight movements and build functional strength",
-    "Liam Carter": "💪 Strength Training - Build muscle and power with proven weightlifting techniques", 
-    "Sofia Müller": "🧘‍♀️ Yoga & Flexibility - Improve balance, flexibility, and mindfulness"
+    "Coach Bauer": "🏃‍♂️ Calisthenics Expert - Master bodyweight movements and build functional strength",
+    "Coach Carter": "💪 Strength Training - Build muscle and power with proven weightlifting techniques", 
+    "Coach Fang": "🧘‍♀️ Yoga & Flexibility - Improve balance, flexibility, and mindfulness"
 }
 
 # App branding banner (removed - no longer used)
@@ -220,7 +240,7 @@ def show_leaderboard():
     st.markdown("""
     <style>
     .leaderboard-container {
-        background: linear-gradient(135deg, #1f1c2c, #928dab);
+        background: linear-gradient(135deg, #1f1c2c, #FFAB0F);
         border-radius: 15px;
         padding: 30px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -400,9 +420,9 @@ def show_exercise_demo():
     coach = st.session_state.get("selected_coach")
     
     coach_to_video = {
-        "Sofia Müller": "data\yoga.mp4",
-        "Max Bauer": "data\pushup.mp4",
-        "Liam Carter": "data\lateral_raises.mp4"
+        "Coach Fang": "data\yoga.mp4",
+        "Coach Bauer": "data\pushup.mp4",
+        "Coach Carter": "data\lateral_raises.mp4"
     }
 
     if coach:
