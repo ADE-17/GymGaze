@@ -45,7 +45,7 @@ def blur_face_eyes(frame, kps):
         right_eye = kps[5]
         center = ((left_eye + right_eye) / 2).astype(int)
         eye_dist = np.linalg.norm(left_eye - right_eye)
-        r = int(eye_dist * 2.2)
+        r = int(eye_dist * 1.2)
         x, y = int(center[0]), int(center[1])
         x1, y1 = max(0, x-r), max(0, y-r)
         x2, y2 = min(frame.shape[1], x+r), min(frame.shape[0], y+r)
@@ -152,12 +152,6 @@ while True:
             bad_reason = ', '.join(reasons)
             feedback = f"{rep_count} - Bad rep ({bad_reason})"
         engine.say(feedback)
-        engine.runAndWait()
-
-    # Alerts for not raising hands high enough
-    if rep_state == 'down' and not hands_high:
-        cv2.putText(frame, "Raise your hands higher!", (30, 330), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 165, 255), 2)
-        engine.say("Raise your hands higher!")
         engine.runAndWait()
 
     # Skeleton drawing
