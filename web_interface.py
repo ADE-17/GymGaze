@@ -10,6 +10,9 @@ if 'page' not in st.session_state:
     st.session_state.page = 'welcome'
 if 'selected_coach' not in st.session_state:
     st.session_state.selected_coach = None
+if 'selected_program_step' not in st.session_state:
+    # Set default to 3 (Lateral Raises) for the initial load
+    st.session_state.selected_program_step = 3
 # --- END SESSION STATE INITIALIZATION ---
 
 
@@ -398,6 +401,37 @@ def topbar():
                 font-weight: 500;
                 margin-bottom: 5px;
             }
+
+            /* Program Page Specific Styles */
+            .program-list-container {
+                background-color: var(--card-background);
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 5px 15px var(--shadow-color);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                margin-right: 20px;
+                height: 100%; /* Take full height of the column */
+            }
+            .program-step-button {
+                background-color: rgba(255, 255, 255, 0.05) !important;
+                color: var(--text-color) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                margin-bottom: 10px;
+                text-align: left;
+                width: 100%;
+            }
+            .program-step-button:hover {
+                background-color: rgba(255, 255, 255, 0.1) !important;
+            }
+            .program-step-button-active {
+                background-color: var(--secondary-color) !important;
+                color: white !important;
+                border: 1px solid #FF1493 !important;
+                font-weight: bold;
+            }
+            .program-step-button-active:hover {
+                background-color: #FF1493 !important;
+            }
         </style>
         """,
         unsafe_allow_html=True,
@@ -427,7 +461,10 @@ def topbar():
             is_program_active = (st.session_state.page == 'exercise_demo')
             if st.button("💪 Program", key="nav_program", use_container_width=True, type="primary" if is_program_active else "secondary"):
                 if st.session_state.selected_coach is None:
-                    st.session_state.selected_coach = "Coach Bauer" # Default coach
+                    st.session_state.selected_coach = "Coach Bauer" # Default coach if none selected
+                # When navigating to program, ensure Lateral Raises is the default shown if no specific step was selected
+                if st.session_state.page != 'exercise_demo': # Only reset if coming from another page
+                    st.session_state.selected_program_step = 3 # Default to Lateral Raises
                 st.session_state.page = 'exercise_demo'
                 st.rerun()
 
@@ -447,9 +484,9 @@ avatar_paths = {
 
 # Coach descriptions
 coach_descriptions = {
-    "Coach Bauer": "🏃‍♂️ Calisthenics Expert - Master bodyweight movements and build functional strength and body control.",
-    "Coach Carter": "💪 Strength Training - Build muscle and power with proven weightlifting techniques and structured progression.",
-    "Coach Fang": "🧘‍♀️ Yoga & Flexibility - Improve balance, flexibility, and mindfulness with ancient practices and modern adaptations."
+    "Coach Bauer": "Adaptive Wellness – Gentle, physiotherapy-informed programs designed for seniors and individuals with special needs.",
+    "Coach Carter": "Strength Training - Build muscle and power with proven weightlifting techniques and structured progression.",
+    "Coach Fang": "Yoga & Flexibility - Improve balance, flexibility, and mindfulness with ancient practices and modern adaptations."
 }
 
 # Main routing logic
@@ -472,7 +509,7 @@ def show_welcome():
         """
         <div class="welcome-message">
             <h3>🌟 Welcome to GymGAZE</h3>
-            <p>Ready to level up your health with our AI coaches, personalized plans, anytime, anywhere?</p>
+            <p>Ready to level up your health with our AI coaches, personalized plans?</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -638,7 +675,7 @@ def show_leaderboard():
 
 
 def show_preferences():
-    st.markdown("### 🧘 Choose Your AI Coach & Workout Style To Personalize Your Journey")
+    st.markdown("### 🧘 Choose Your AI Coach & Personalize Your Journey")
 
     cols = st.columns(3)
 
@@ -649,7 +686,7 @@ def show_preferences():
             st.markdown(f"""
                 <div class="coach-selection-container">
                     <h4 class="coach-card-title">{coach_name}</h4>
-            """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
 
             try:
                 img = Image.open(avatar_paths[coach_name])
@@ -697,34 +734,57 @@ def show_exercise_demo():
 
     coach = st.session_state.get("selected_coach")
 
-    coach_to_video = {
-        "Coach Fang": "data/yoga.mp4",
-        "Coach Bauer": "data/pushup.mp4",
-        "Coach Carter": "data/lateral_raises.mp4"
+    # Define program steps and their corresponding videos
+    # Make sure you have these video files in your 'data' folder
+    program_steps = {
+        1: {"name": "1: Warm-up", "video": None},
+        2: {"name": "2: Stretching", "video": "data/yoga.mp4"},
+        3: {"name": "3: Lateral Raises", "video": "data/lateral_raises.mp4"},
+        4: {"name": "4: Push-ups", "video": "data/pushup.mp4"},
+        5: {"name": "5: Physiotherapy", "video": None}, # 
     }
 
-    if coach:
-        video_path = coach_to_video.get(coach)
+    # Create two columns: one for the program list and one for the video
+    program_col, video_col = st.columns([0.3, 0.7]) # Adjust ratios as needed
 
-        if video_path:
-            left_col, video_col, right_col = st.columns([0.1, 0.8, 0.1])
+    with program_col:
+        st.markdown("<div class='program-list-container'>", unsafe_allow_html=True)
+        st.markdown("<h4>Daily Program:</h4>", unsafe_allow_html=True)
+        for step_num, step_info in program_steps.items():
+            is_active = (st.session_state.selected_program_step == step_num)
+            
+            # Use Streamlit's built-in button type for "primary" if active, "secondary" otherwise
+            # This makes the active button stand out without custom CSS workarounds
+            button_type = "primary" if is_active else "secondary"
 
-            with video_col:
-                st.markdown("<div class='video-container'>", unsafe_allow_html=True)
-                st.video(video_path, autoplay=True, loop=True, muted=True)
-                st.markdown("</div>", unsafe_allow_html=True)
+            if st.button(
+                step_info["name"],
+                key=f"program_step_{step_num}",
+                use_container_width=True,
+                type=button_type, # Apply the type here
+                help=f"Click to play {step_info['name']}"
+            ):
+                st.session_state.selected_program_step = step_num
+                st.rerun()
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with video_col:
+        current_video_path = program_steps.get(st.session_state.selected_program_step, {}).get("video")
+
+        if current_video_path:
+            st.markdown("<div class='video-container'>", unsafe_allow_html=True)
+            st.video(current_video_path, autoplay=True, loop=True, muted=True)
+            st.markdown("</div>", unsafe_allow_html=True)
         else:
-            st.error(f"No demo video found for {coach}. Please check the 'data' folder.")
-    else:
-        st.warning("Please select a coach first from the 'Coaches' page.")
-
+            st.error("No video found for the selected program step. Please check the 'data' folder.")
+            # Optionally set a default video if one is missing
+            # st.video("data/default_placeholder.mp4")
+            
     st.markdown("<div class='demo-button-container'>", unsafe_allow_html=True)
     if st.button("➡️ Proceed to Leaderboard", key="proceed_leaderboard_demo"):
-        if st.session_state.selected_coach is None:
-            st.error("Please select a coach to continue.")
-        else:
-            st.session_state.page = 'leaderboard'
-            st.rerun()
+        st.session_state.page = 'leaderboard'
+        st.rerun()
     st.markdown("</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
