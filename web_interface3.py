@@ -53,25 +53,6 @@ def topbar():
                 overflow: hidden;
             }
 
-            /* NEW CSS FOR BUTTONS */
-            /* Target Streamlit buttons within the nav-container */
-            .nav-container button {
-                background-color: #a65314 !important; /* A slightly darker shade of your topbar color */
-                color: white; /* Text color for the buttons */
-                border: 1px solid #7a3a0e; /* A subtle border */
-                border-radius: 8px; /* Rounded corners */
-                padding: 0.5rem 1rem; /* Padding inside buttons */
-                font-size: 0.9rem; /* Adjust font size if needed */
-                font-weight: bold;
-                cursor: pointer;
-                transition: background-color 0.3s ease; /* Smooth hover effect */
-            }
-
-            /* Hover effect for buttons */
-            .nav-container button:hover {
-                background-color: #a65314; /* Lighter shade on hover */
-                border-color: #be611e;
-            }
 
             /* Video container styling */
             .video-container {
